@@ -73,16 +73,22 @@ Middleware used:
     -- View: active_users
     
     CREATE  VIEW IF NOT  EXISTS active_users AS
-    SELECT u.id,
-    u.username,
-    u.password,
-    role,is_admin,
-    datetime('now', 'localtime') AS login_time
+        SELECT 
+        u.id AS id,
+        password,
+        u.username,
+        u.role_id,
+        is_admin,
+        r.role,
+        COALESCE(GROUP_CONCAT(p.permission, ', '), 'No Permissions') AS permissions,
+        datetime('now','localtime') as login_time
     FROM users u
-    LEFT JOIN
-    roles r ON r.id = u.role_id
-    WHERE u.role_id IS NOT NULL;
-    
+    LEFT JOIN roles r ON u.role_id = r.id
+    LEFT JOIN role_permissions rp ON r.id = rp.role_id
+    LEFT JOIN permissions p ON rp.permission_id = p.id
+    WHERE u.role_id IS NOT NULL
+    GROUP BY u.id, u.username, u.role_id, r.role
+        
 
     COMMIT  TRANSACTION;
     PRAGMA foreign_keys = on;
