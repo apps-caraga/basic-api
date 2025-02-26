@@ -23,12 +23,31 @@ $config = new Config([
 		"dbAuth.loginTable"=>"active_users",
 		'authorization.tableHandler' => function ($operation, $tableName) {
             $current_role = $_SESSION['user']['role'];
+			$permissions = array_map('trim', explode(',', $_SESSION['user']['permissions']));
+ 
 			$admin_tables = ['roles']; //array of tables accessible to admins only
 
 		 	if(is_admin()){
 				return true;
 			}else{ // not admin, return false if requested table is for admins only
-				return (!in_array($tableName,$admin_tables));
+				switch($operation){
+					case 'create':
+						return (in_array("CREATE",$permissions) && !in_array($tableName,$admin_tables));
+						break;
+					case 'read':
+					case 'list':
+						return (in_array("READ" ,$permissions) && !in_array($tableName,$admin_tables));
+						break;
+					case 'update':
+						return (in_array("UPDATE",$permissions) && !in_array($tableName,$admin_tables));
+						break;
+					case 'delete':
+						return (in_array("DELETE",$permissions) && !in_array($tableName,$admin_tables));
+						break;
+					default:
+						return false;
+						break;
+				}
 			}
 		},
 		'authorization.columnHandler'=>function($operation, $tableName, $columnName){

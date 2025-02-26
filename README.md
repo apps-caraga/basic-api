@@ -36,7 +36,25 @@ Middleware used:
     created_at INTEGER  DEFAULT (unixepoch() )NOT NULL);
     
       
+      -- Table: role_permissions
       
+    CREATE TABLE IF NOT EXISTS role_permissions (
+        id            INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,
+        role_id       INTEGER REFERENCES roles (id) ON DELETE CASCADE  NOT NULL,
+        permission_id INTEGER REFERENCES permissions (id) ON DELETE CASCADE  NOT NULL,
+        created_at    INTEGER NOT NULL  DEFAULT (unixepoch() ) 
+    );
+
+
+ 
+
+    -- Table: permissions
+
+    CREATE TABLE IF NOT EXISTS permissions (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL,
+        permission TEXT    UNIQUE  NOT NULL,
+        created_at INTEGER NOT NULL  DEFAULT (unixepoch() ) 
+    );
     
     -- Table: users
     
