@@ -13,6 +13,7 @@ require_once 'api.include.php';
 function is_admin(){
 	return (bool) $_SESSION['user']['is_admin'];
 }
+
 $config = new Config([
         'driver' => 'sqlite',
         'address' => 'database.sqlite',

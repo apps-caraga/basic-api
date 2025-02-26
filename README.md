@@ -45,6 +45,7 @@ Middleware used:
     username TEXT  UNIQUE NOT NULL,
     password  TEXT  NOT NULL,
     role_id INTEGER  REFERENCES roles (id),
+    is_admin   INTEGER CONSTRAINT ZERO_OR_ONE_ONLY CHECK (is_admin IN (1, 0) )  DEFAULT (0),
     created_at INTEGER  DEFAULT (unixepoch() )
     NOT NULL);
     
@@ -57,7 +58,7 @@ Middleware used:
     SELECT u.id,
     u.username,
     u.password,
-    role,
+    role,is_admin,
     datetime('now', 'localtime') AS login_time
     FROM users u
     LEFT JOIN
